@@ -1,0 +1,57 @@
+{
+  "runs": 5,
+  "valid_recoveries": 5,
+  "rto_mean_s": 27.18,
+  "rto_stddev_s": 1.63,
+  "rto_min_s": 25.0,
+  "rto_max_s": 28.9,
+  "by_mode": {
+    "netblock": {
+      "n": 5,
+      "mean_s": 27.18,
+      "stddev_s": 1.63
+    }
+  },
+  "detail": [
+    {
+      "run": 1,
+      "mode": "netblock",
+      "kill_delay_s": 6.1,
+      "rto_measured_s": 28.9,
+      "valid": true,
+      "verdict": "PASS"
+    },
+    {
+      "run": 2,
+      "mode": "netblock",
+      "kill_delay_s": 12.5,
+      "rto_measured_s": 25.0,
+      "valid": true,
+      "verdict": "PASS"
+    },
+    {
+      "run": 3,
+      "mode": "netblock",
+      "kill_delay_s": 12.8,
+      "rto_measured_s": 28.7,
+      "valid": true,
+      "verdict": "PASS"
+    },
+    {
+      "run": 4,
+      "mode": "netblock",
+      "kill_delay_s": 13.5,
+      "rto_measured_s": 26.5,
+      "valid": true,
+      "verdict": "PASS"
+    },
+    {
+      "run": 5,
+      "mode": "netblock",
+      "kill_delay_s": 8.3,
+      "rto_measured_s": 26.8,
+      "valid": true,
+      "verdict": "PASS"
+    }
+  ]
+}

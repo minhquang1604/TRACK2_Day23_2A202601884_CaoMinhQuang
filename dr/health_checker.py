@@ -29,13 +29,58 @@ URL = {"a": "http://127.0.0.1:8001", "b": "http://127.0.0.1:8002"}
 
 
 def probe(region: str, timeout: float) -> tuple[bool, str]:
-    """TODO: trả về (ready, reason). Timeout PHẢI có — netblock làm request treo mãi."""
-    raise NotImplementedError
+    """Gọi /readyz của 1 region. Timeout PHẢI có — netblock làm request treo mãi."""
+    try:
+        r = httpx.get(f"{URL[region]}/readyz", timeout=timeout)
+        body = r.json()
+        ready = bool(body.get("ready"))
+        reason = "ready" if ready else (",".join(body.get("reasons", [])) or f"http_{r.status_code}")
+        return ready, reason
+    except Exception as e:  # netblock (SIGSTOP) -> treo -> timeout; stop (SIGKILL) -> ConnectError
+        return False, type(e).__name__
+
+
+def _emit(f, *, region, to, reason, interval, threshold, consecutive):
+    line = {
+        "event": "state_change", "ts": time.time(), "region": region, "to": to,
+        "reason": reason, "interval_s": interval, "threshold": threshold,
+        "consecutive_fails": consecutive,
+    }
+    f.write(json.dumps(line) + "\n")
+    f.flush()
+    print(json.dumps(line))
 
 
 def run(interval: float, timeout: float, threshold: int, duration: float, out: pathlib.Path):
-    """TODO: vòng lặp poll + phát hiện transition + ghi JSONL."""
-    raise NotImplementedError
+    """Poll /readyz của cả 2 region mỗi `interval`s, chỉ đổi trạng thái sau
+    `threshold` lần fail (hoặc thành công) LIÊN TIẾP, và chỉ ghi log khi trạng thái
+    thực sự đổi (không ghi mỗi lần poll)."""
+    out.parent.mkdir(parents=True, exist_ok=True)
+    regions = ("a", "b")
+    state = {r: "UNKNOWN" for r in regions}
+    consec_fail = {r: 0 for r in regions}
+    consec_ok = {r: 0 for r in regions}
+    start = time.time()
+    with out.open("a", encoding="utf-8") as f:
+        while time.time() - start < duration:
+            for region in regions:
+                ready, reason = probe(region, timeout)
+                if ready:
+                    consec_fail[region] = 0
+                    consec_ok[region] += 1
+                    if state[region] != "HEALTHY" and consec_ok[region] >= threshold:
+                        state[region] = "HEALTHY"
+                        _emit(f, region=region, to="HEALTHY", reason=reason,
+                              interval=interval, threshold=threshold, consecutive=0)
+                else:
+                    consec_ok[region] = 0
+                    consec_fail[region] += 1
+                    if state[region] != "UNHEALTHY" and consec_fail[region] >= threshold:
+                        state[region] = "UNHEALTHY"
+                        _emit(f, region=region, to="UNHEALTHY", reason=reason,
+                              interval=interval, threshold=threshold,
+                              consecutive=consec_fail[region])
+            time.sleep(interval)
 
 
 if __name__ == "__main__":

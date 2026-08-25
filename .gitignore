@@ -20,3 +20,6 @@ venv/
 
 # OS
 .DS_Store
+
+# Terraform (Stretch Goal 4 — write-only, khong apply that)
+infra/.terraform/

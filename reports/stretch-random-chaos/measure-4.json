@@ -1,0 +1,34 @@
+{
+  "valid": true,
+  "invalid_reasons": [],
+  "warnings": [],
+  "killed_region": "a",
+  "recovered_by_region": "b",
+  "t_outage_iso": "2026-08-25T08:58:08",
+  "chaos_mode": "netblock",
+  "breakdown_seconds_from_t0": {
+    "user_thay_loi_dau_tien": 0.0,
+    "health_check_phat_hien": 17.8,
+    "dns_cutover": 24.6,
+    "request_thanh_cong_dau_tien": 26.5
+  },
+  "health_check_config": {
+    "interval_s": 5.0,
+    "threshold": 3,
+    "detect_floor_s": 15.0
+  },
+  "rto_measured_s": 26.5,
+  "rto_target_s": 300.0,
+  "rto_verdict": "PASS",
+  "rpo_at_restore_s": 0.0,
+  "docs_lost": 0,
+  "requests_failed": 13,
+  "evidence": {
+    "loadgen": "/home/quang/projects/Lab/TRACK2_Day23_2A202601884_CaoMinhQuang/reports/stretch-random-chaos/loadgen-4.jsonl",
+    "chaos": "/home/quang/projects/Lab/TRACK2_Day23_2A202601884_CaoMinhQuang/chaos/chaos-events.jsonl",
+    "health": "/home/quang/projects/Lab/TRACK2_Day23_2A202601884_CaoMinhQuang/reports/health-events.jsonl",
+    "failover": "/home/quang/projects/Lab/TRACK2_Day23_2A202601884_CaoMinhQuang/reports/failover-events.jsonl"
+  },
+  "mode": "netblock",
+  "kill_delay_s": 13.5
+}
